@@ -36,7 +36,7 @@ on:
           - connection
         required: true
       integrationName:
-        description: Enter the name of the integration to be released (e.g., Salesforce)
+        description: Enter the name of the integration to be released (e.g., salesforce)
         required: true
 
 jobs:
