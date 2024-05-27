@@ -29,12 +29,15 @@ on:
   workflow_dispatch:
     inputs:
       releaseType:
+        description: Select the integration type for which you want the artifacts to be released
         type: choice
-        description: Choose which environment you would like the artifacts to be generated
         options:
-          - dev
-          - stage
-          - prod
+          - application
+          - connection
+        required: true
+      releaseType:
+        description: Enter the name of the integration to be released (e.g., Salesforce)
+        required: true
 
 jobs:
   test:
