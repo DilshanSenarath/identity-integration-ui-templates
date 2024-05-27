@@ -39,54 +39,57 @@ on:
                 description: Enter the name of the integration to be released (e.g., salesforce)
                 required: true
 
+env:
+    INTEGRATION_TYPES: applications,connections
+    MAIN_VERSION: v1.0
+
 jobs:
-    is_application_template_changed:
-        name: Detecting Application Template Changes
+    release_integration_templates:
+        name: Release Integration Templates
         runs-on: ubuntu-latest
-        outputs:
-            application_template_changed: ${{ steps.check_application_template_changes.outputs.application_template_changed }}
         steps:
             - name: Checkout
               uses: actions/checkout@v2
               with:
-                  fetch-depth: 2
+                fetch-depth: 2
 
-            - name: Check application template changes
-              id: check_application_template_changes
+            - name: Check integration template changes
+              id: check_integration_template_changes
               run: |
-                  diff=$(git diff --name-only HEAD^ HEAD)
+                diff=$(git diff --name-only HEAD^ HEAD)
 
-                  sourceDiff=$(grep '^applications/.*' <<<"$diff")
+                integration_types=(${INTEGRATION_TYPES//,/ })
 
-                  if [[ $(echo "$sourceDiff" | wc -l) -gt 0 ]]; then
-                    echo "::set-output name=application_template_changed::1"
-                  else
-                    echo "::set-output name=application_template_changed::0"
-                  fi
+                declare -A integration_templates
 
-    is_connection_template_changed:
-        name: Detecting Connection Template Changes
-        runs-on: ubuntu-latest
-        outputs:
-            connection_template_changed: ${{ steps.check_connection_template_changes.outputs.connection_template_changed }}
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v2
-              with:
-                  fetch-depth: 2
+                for type in $integration_types; do
+                    integration_type_diff=$(grep '^$type/.*' <<<"$diff")
 
-            - name: Check connection template changes
-              id: check_connection_template_changes
+                    if [[ -z "$integration_type_diff" ]]; then
+                        continue
+                    fi
+
+                    declare -s unique_template_names
+
+                    for filepath in $integration_type_diff; do
+                        template_name="${filepath##*/}"
+
+                        unique_template_names+="$template_name"
+                    done
+
+                    integration_templates["$type"]="$unique_template_names"
+                done
+
+            - name: Use Templates
               run: |
-                  diff=$(git diff --name-only HEAD^ HEAD)
-
-                  sourceDiff=$(grep '^connections/.*' <<<"$diff")
-
-                  if [[ $(echo "$sourceDiff" | wc -l) -gt 0 ]]; then
-                    echo "::set-output name=connection_template_changed::1"
-                  else
-                    echo "::set-output name=connection_template_changed::0"
-                  fi
+                for resource_type in "${!templates[@]}"; do
+                    echo "Resource type: $resource_type"
+                    if [[ -n "${templates[$resource_type]}" ]]; then
+                        echo "  - ${templates[$resource_type]}"
+                    else
+                        echo "  - No changes detected."
+                    fi
+                done
 
         # dev-build:
         #     runs-on: ubuntu-latest
@@ -173,189 +176,3 @@ jobs:
         #               git add cd-pipelines/accounts-content/dev-setup-variables.yaml
         #               git commit -m "[Dev] Update the accounts content release version to - ${{ env.newVersion }}"
         #               git push origin dev-001
-
-        # stage-build:
-        #     runs-on: ubuntu-latest
-
-        #     needs: [is_stage_changed]
-        #     if: needs.is_stage_changed.outputs.stage_changed == 'True' || (github.event.inputs.releaseType == 'stage')
-
-        #     steps:
-        #         - uses: actions/checkout@v3
-        #           with:
-        #               fetch-depth: 0
-
-        #         - name: Download Identity Apps Source Code
-        #           run: wget "${{ env.IDENTITY_APPS_URL }}/identity-apps-core@${{ env.IDENTITY_APPS_TAG }}.zip" -P .target
-
-        #         - name: Extract Identity Apps Source Code Zip
-        #           run: unzip -d .target .target/identity-apps-core@${{ env.IDENTITY_APPS_TAG }}.zip
-
-        #         - name: Move custom layouts into indentity-apps layouts directory
-        #           run: |
-        #               # Move all custom layout into identity-apps/components/login-portal-layouts/layouts directory
-        #               identityVersion=${{ env.IDENTITY_APPS_TAG }}
-        #               while read -r orgName
-        #               do
-        #                 if [ -d "stage/$orgName/layout/src" ]
-        #                 then
-        #                   rsync -a "stage/$orgName/layout/src/" ".target/identity-apps--wso2is-identity-apps-core-${identityVersion}/identity-apps-core/components/login-portal-layouts/layouts/$orgName"
-        #                 fi
-        #               done <<< "$(cd stage && ls)"
-
-        #         - name: Set up JDK 11
-        #           uses: actions/setup-java@v3
-        #           with:
-        #               java-version: "11"
-        #               distribution: "temurin"
-        #               cache: maven
-
-        #         - name: Build with Maven
-        #           run: |
-        #               identityVersion=${{ env.IDENTITY_APPS_TAG }}
-        #               mvn clean install --file .target/identity-apps--wso2is-identity-apps-core-${identityVersion}/identity-apps-core/components/login-portal-layouts/pom.xml
-
-        #         - name: Create the new tag
-        #           run: |
-        #               newVersion=""
-        #               tagsArray=($(echo "$(git tag | sort -V)" | tr "," "\n"))
-        #               if [[ ${#tagsArray[@]} = 0 ]]; then
-        #                 newVersion="${{ env.MAIN_VERSION }}.0"
-        #               else
-        #                 readarray -d . -t releaseVersionParts <<< "${tagsArray[-1]}"
-        #                 if [[ "${releaseVersionParts[0]}.${releaseVersionParts[1]}" = "${{ env.MAIN_VERSION }}" ]]
-        #                 then
-        #                   newVersion="${{ env.MAIN_VERSION }}.$((${releaseVersionParts[2]} + 1))"
-        #                 else
-        #                   newVersion="${{ env.MAIN_VERSION }}.0"
-        #                 fi
-        #               fi
-        #               echo "::set-env name=newVersion::$newVersion"
-
-        #         - name: Create a zip file containing all accounts content
-        #           run: |
-        #               identityVersion=${{ env.IDENTITY_APPS_TAG }}
-        #               cd .target/identity-apps--wso2is-identity-apps-core-${identityVersion}/identity-apps-core/components/login-portal-layouts/target/layouts
-        #               zip -r "${GITHUB_WORKSPACE}/.target/stage-accounts-content-$newVersion.zip" ./*
-        #               echo $newVersion
-
-        #         - name: Create a new release
-        #           uses: ncipollo/release-action@v1
-        #           with:
-        #               tag: ${{ env.newVersion }}
-        #               artifacts: .target/stage-accounts-content-${{ env.newVersion }}.zip
-        #               token: ${{ secrets.GITHUB_TOKEN }}
-
-        #         - name: Add changes to the stage pipeline
-        #           run: |
-        #               mkdir deployment-pipeline
-        #               git clone "https://${{ env.GIT_USERNAME }}:${{ secrets.ASGARDEO_DEV_PIPELINE_BOT_TOKEN }}@github.com/wso2-enterprise/asgardeo-deployment-pipeline.git" deployment-pipeline
-        #               cd deployment-pipeline
-        #               NEW_BRANCH_NAME=stage-accounts-content-${{ env.newVersion }}
-        #               git checkout -b $NEW_BRANCH_NAME origin/stage-001
-        #               git config user.name "${{ env.GIT_USERNAME }}"
-        #               git config user.email "iam-cloud@wso2.com"
-        #               REF_IN_STAGE=$(grep 'GITHUB_RELEASE_TAG:' cd-pipelines/accounts-content/stage-setup-variables.yaml)
-        #               sed -i 's|'"${REF_IN_STAGE}"'|  GITHUB_RELEASE_TAG: '"${{ env.newVersion }}"'|' cd-pipelines/accounts-content/stage-setup-variables.yaml
-        #               git add cd-pipelines/accounts-content/stage-setup-variables.yaml
-        #               git commit -m "[stage-001] Update the accounts content release version to - ${{ env.newVersion }}"
-        #               git push origin $NEW_BRANCH_NAME
-        #               curl \
-        #                 -sX POST \
-        #                 -u "${{ secrets.ASGARDEO_DEV_PIPELINE_BOT_TOKEN }}" \
-        #                 -H "Accept: application/vnd.github.v3+json" \
-        #                 -d '{"title": "[stage-001] Update the accounts content release version to - ${{ env.newVersion }}", "head": "wso2-enterprise:'"$NEW_BRANCH_NAME"'", "base": "stage-001", "body": "$subject"}' \
-        #                 "https://api.github.com/repos/wso2-enterprise/asgardeo-deployment-pipeline/pulls"
-
-        # prod-build:
-        #     runs-on: ubuntu-latest
-
-        #     needs: [is_prod_changed]
-        #     if: needs.is_prod_changed.outputs.prod_changed == 'True' || (github.event.inputs.releaseType == 'prod')
-
-        #     steps:
-        #         - uses: actions/checkout@v3
-        #           with:
-        #               fetch-depth: 0
-
-        #         - name: Download Identity Apps Source Code
-        #           run: wget "${{ env.IDENTITY_APPS_URL }}/identity-apps-core@${{ env.IDENTITY_APPS_TAG }}.zip" -P .target
-
-        #         - name: Extract Identity Apps Source Code Zip
-        #           run: unzip -d .target .target/identity-apps-core@${{ env.IDENTITY_APPS_TAG }}.zip
-
-        #         - name: Move custom layouts into identity-apps layouts directory
-        #           run: |
-        #               # Move all custom layout into identity-apps/components/login-portal-layouts/layouts directory
-        #               identityVersion=${{ env.IDENTITY_APPS_TAG }}
-        #               while read -r orgName
-        #               do
-        #                 if [ -d "prod/$orgName/layout/src" ]
-        #                 then
-        #                   rsync -a "prod/$orgName/layout/src/" ".target/identity-apps--wso2is-identity-apps-core-${identityVersion}/identity-apps-core/components/login-portal-layouts/layouts/$orgName"
-        #                 fi
-        #               done <<< "$(cd prod && ls)"
-
-        #         - name: Set up JDK 11
-        #           uses: actions/setup-java@v3
-        #           with:
-        #               java-version: "11"
-        #               distribution: "temurin"
-        #               cache: maven
-
-        #         - name: Build with Maven
-        #           run: |
-        #               identityVersion=${{ env.IDENTITY_APPS_TAG }}
-        #               mvn clean install --file .target/identity-apps--wso2is-identity-apps-core-${identityVersion}/identity-apps-core/components/login-portal-layouts/pom.xml
-
-        #         - name: Create the new tag
-        #           run: |
-        #               newVersion=""
-        #               tagsArray=($(echo "$(git tag | sort -V)" | tr "," "\n"))
-        #               if [[ ${#tagsArray[@]} = 0 ]]; then
-        #                 newVersion="${{ env.MAIN_VERSION }}.0"
-        #               else
-        #                 readarray -d . -t releaseVersionParts <<< "${tagsArray[-1]}"
-        #                 if [[ "${releaseVersionParts[0]}.${releaseVersionParts[1]}" = "${{ env.MAIN_VERSION }}" ]]
-        #                 then
-        #                   newVersion="${{ env.MAIN_VERSION }}.$((${releaseVersionParts[2]} + 1))"
-        #                 else
-        #                   newVersion="${{ env.MAIN_VERSION }}.0"
-        #                 fi
-        #               fi
-        #               echo "::set-env name=newVersion::$newVersion"
-
-        #         - name: Create a zip file containing all accounts content
-        #           run: |
-        #               identityVersion=${{ env.IDENTITY_APPS_TAG }}
-        #               cd .target/identity-apps--wso2is-identity-apps-core-${identityVersion}/identity-apps-core/components/login-portal-layouts/target/layouts
-        #               zip -r "${GITHUB_WORKSPACE}/.target/prod-accounts-content-$newVersion.zip" ./*
-        #               echo $newVersion
-
-        #         - name: Create a new release
-        #           uses: ncipollo/release-action@v1
-        #           with:
-        #               tag: ${{ env.newVersion }}
-        #               artifacts: .target/prod-accounts-content-${{ env.newVersion }}.zip
-        #               token: ${{ secrets.GITHUB_TOKEN }}
-
-        #         - name: Add changes to the prod pipeline
-        #           run: |
-        #               mkdir deployment-pipeline
-        #               git clone "https://${{ env.GIT_USERNAME }}:${{ secrets.ASGARDEO_DEV_PIPELINE_BOT_TOKEN }}@github.com/wso2-enterprise/asgardeo-deployment-pipeline.git" deployment-pipeline
-        #               cd deployment-pipeline
-        #               NEW_BRANCH_NAME=prod-accounts-content-${{ env.newVersion }}
-        #               git checkout -b $NEW_BRANCH_NAME origin/prod-001
-        #               git config user.name "${{ env.GIT_USERNAME }}"
-        #               git config user.email "iam-cloud@wso2.com"
-        #               REF_IN_PROD=$(grep 'GITHUB_RELEASE_TAG:' cd-pipelines/accounts-content/prod-setup-variables.yaml)
-        #               sed -i 's|'"${REF_IN_PROD}"'|  GITHUB_RELEASE_TAG: '"${{ env.newVersion }}"'|' cd-pipelines/accounts-content/prod-setup-variables.yaml
-        #               git add cd-pipelines/accounts-content/prod-setup-variables.yaml
-        #               git commit -m "[prod-001] Update the accounts content release version to - ${{ env.newVersion }}"
-        #               git push origin $NEW_BRANCH_NAME
-        #               curl \
-        #                 -sX POST \
-        #                 -u "${{ secrets.ASGARDEO_DEV_PIPELINE_BOT_TOKEN }}" \
-        #                 -H "Accept: application/vnd.github.v3+json" \
-        #                 -d '{"title": "[prod-001] Update the accounts content release version to - ${{ env.newVersion }}", "head": "wso2-enterprise:'"$NEW_BRANCH_NAME"'", "base": "prod-001", "body": "$subject"}' \
-        #                 "https://api.github.com/repos/wso2-enterprise/asgardeo-deployment-pipeline/pulls"
