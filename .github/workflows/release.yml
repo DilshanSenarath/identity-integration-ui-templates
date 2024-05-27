@@ -35,7 +35,7 @@ on:
           - application
           - connection
         required: true
-      releaseType:
+      integrationName:
         description: Enter the name of the integration to be released (e.g., Salesforce)
         required: true
 
