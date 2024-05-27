@@ -1,0 +1,72 @@
+{
+    "id": "salesforce",
+    "name": "Salesforce",
+    "description": "Salesforce is a customer relationship management (CRM) platform that enables businesses to manage their sales, marketing, and customer service operations efficiently.",
+    "image": "{{CONSOLE_BASE_URL}}/resources/applications/assets/images/illustrations/salesforce.svg",
+    "displayOrder": 6,
+    "category": "SSO-INTEGRATION",
+    "tags": [
+        "SAML",
+		"SSO"
+    ],
+    "type": "applications",
+    "payload": {
+        "name": "Salesforce",
+        "advancedConfigurations": {
+            "discoverableByEndUsers": false,
+            "skipLogoutConsent": true
+        },
+        "authenticationSequence": {
+            "type": "DEFAULT",
+            "steps": [
+                {
+                    "id": 1,
+                    "options": [
+                        {
+                            "idp": "LOCAL",
+                            "authenticator": "basic"
+                        }
+                    ]
+                }
+            ]
+        },
+        "claimConfiguration": {
+            "dialect": "LOCAL",
+            "requestedClaims": [
+                {
+                    "claim": {
+                        "uri": "http://wso2.org/claims/username"
+                    }
+                }
+            ]
+        },
+        "inboundProtocolConfiguration": {
+            "oidc": {
+                "accessToken": {
+                    "applicationAccessTokenExpiryInSeconds": 3600,
+                    "bindingType": "sso-session",
+                    "revokeTokensWhenIDPSessionTerminated": true,
+                    "type": "Default",
+                    "userAccessTokenExpiryInSeconds": 3600,
+                    "validateTokenBinding": false
+                },
+                "grantTypes": [
+                    "authorization_code",
+                    "refresh_token"
+                ],
+                "allowedOrigins": ["https://example.com"],
+                "callbackURLs": ["https://example.com/login"],
+                "pkce": {
+                    "mandatory": true,
+                    "supportPlainTransformAlgorithm": false
+                },
+                "publicClient": true,
+                "refreshToken": {
+                    "expiryInSeconds": 86400,
+                    "renewRefreshToken": true
+                }
+            }
+        },
+        "templateId": "salesforce"
+    }
+}
