@@ -56,6 +56,15 @@ jobs:
               run: |
                   diff=$(git diff --name-only HEAD^ HEAD)
 
+                  if [[ -n "$diff" ]]; then
+                    echo "Changed files:"
+                    for file in $diff; do
+                        echo "  - $file"
+                    done
+                  else
+                    echo "No changes detected."
+                  fi
+
                   sourceDiff=$(grep '^applications/.*' <<<"$diff")
 
                   if [[ $(echo "$sourceDiff" | wc -l) -gt 0 ]]; then
