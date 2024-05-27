@@ -36,13 +36,13 @@ on:
           - stage
           - prod
 
-  jobs:
-    test:
-      runs-on: ubuntu-latest
-      steps:
-        - name: test-step
-          id: test-run
-          run: echo "Release executed..."
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: test-step
+        id: test-run
+        run: echo "Release executed..."
 
 
 # env:
