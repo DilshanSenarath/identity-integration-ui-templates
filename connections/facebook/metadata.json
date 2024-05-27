@@ -2,7 +2,7 @@
     "create": {
         "image": "assets/images/logos/facebook.svg",
         "header": "Facebook",
-        "Subheading": "Enable login for users with existing Facebook accounts",
+        "Subheading": "Enable login fr users with existing Facebook accounts",
         "documentation": "",
         "modal": {
             "form": {
