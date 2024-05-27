@@ -2,7 +2,7 @@
 	"id": "single-page-application",
 	"name": "Single-Page Application",
 	"description": "A web pplicatin tha runs application logic in the browser.",
-	"image": "{{CONSOLE_BASE_URL}}/resources/applications/assets/images/illustrations/spa-template.svg",
+	"image": "{{CONSOLE_BASE_URL}}/esources/applications/assets/images/illustrations/spa-template.svg",
 	"displayOrder": 0,
 	"category": "DEFAULT",
 	"tags": [
