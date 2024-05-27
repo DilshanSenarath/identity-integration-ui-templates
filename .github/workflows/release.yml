@@ -56,60 +56,37 @@ jobs:
               run: |
                   diff=$(git diff --name-only HEAD^ HEAD)
 
-                  if [[ -n "$diff" ]]; then
-                    echo "Changed files:"
-                    for file in $diff; do
-                        echo "  - $file"
-                    done
-                  else
-                    echo "No changes detected."
-                  fi
-
                   sourceDiff=$(grep '^applications/.*' <<<"$diff")
 
                   if [[ $(echo "$sourceDiff" | wc -l) -gt 0 ]]; then
                     echo "::set-output name=application_template_changed::1"
+                  else
+                    echo "::set-output name=application_template_changed::0"
                   fi
 
-        # is_stage_changed:
-        #     runs-on: ubuntu-latest
+    is_connection_template_changed:
+        name: Detecting Connection Template Changes
+        runs-on: ubuntu-latest
+        outputs:
+            connection_template_changed: ${{ steps.check_connection_template_changes.outputs.connection_template_changed }}
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+              with:
+                  fetch-depth: 2
 
-        #     outputs:
-        #         stage_changed: ${{ steps.check_stage_changed.outputs.stage_changed }}
-        #     steps:
-        #         - uses: actions/checkout@v2
-        #           with:
-        #               fetch-depth: 2
+            - name: Check connection template changes
+              id: check_connection_template_changes
+              run: |
+                  diff=$(git diff --name-only HEAD^ HEAD)
 
-        #         - shell: pwsh
-        #           id: check_stage_changed
-        #           run: |
-        #               $diff = git diff --name-only HEAD^ HEAD
+                  sourceDiff=$(grep '^connections/.*' <<<"$diff")
 
-        #               $SourceDiff = $diff | Where-Object { $_ -match '^stage/' }
-        #               $HasDiff = $SourceDiff.Length -gt 0
-
-        #               Write-Host "::set-output name=stage_changed::$HasDiff"
-
-        # is_prod_changed:
-        #     runs-on: ubuntu-latest
-
-        #     outputs:
-        #         prod_changed: ${{ steps.check_prod_changed.outputs.prod_changed }}
-        #     steps:
-        #         - uses: actions/checkout@v2
-        #           with:
-        #               fetch-depth: 2
-
-        #         - shell: pwsh
-        #           id: check_prod_changed
-        #           run: |
-        #               $diff = git diff --name-only HEAD^ HEAD
-
-        #               $SourceDiff = $diff | Where-Object { $_ -match '^prod/' }
-        #               $HasDiff = $SourceDiff.Length -gt 0
-
-        #               Write-Host "::set-output name=prod_changed::$HasDiff"
+                  if [[ $(echo "$sourceDiff" | wc -l) -gt 0 ]]; then
+                    echo "::set-output name=connection_template_changed::1"
+                  else
+                    echo "::set-output name=connection_template_changed::0"
+                  fi
 
         # dev-build:
         #     runs-on: ubuntu-latest
