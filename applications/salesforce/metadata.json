@@ -74,7 +74,7 @@
 							"label": "Description",
 							"type": "textarea",
 							"required": false,
-							"placeholder": "My App Description",
+							"placeholder": "My App Descriptio",
 							"data-componentid": "dynamic-application-edit-form-application-description"
 						}
 					],
