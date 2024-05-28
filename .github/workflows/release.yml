@@ -59,8 +59,13 @@ jobs:
                 diff=$(git diff --name-only HEAD^ HEAD)
 
                 origin_IFS="$IFS"
-                IFS=',' read -r -a integration_types <<< "${{ env.INTEGRATION_TYPES }}"
+                IFS=','
+                integration_types=()
+                for type in "${{ env.INTEGRATION_TYPES }}"; do
+                    integration_types+=("$type")
+                done
                 IFS=origin_IFS
+                echo "$IFS"
                 echo "$integration_types"
 
                 for type in "${integration_types[@]}"; do
