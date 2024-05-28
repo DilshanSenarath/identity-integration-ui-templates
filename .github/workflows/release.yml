@@ -58,7 +58,7 @@ jobs:
               run: |
                 diff=$(git diff --name-only HEAD^ HEAD)
 
-                integration_types=',' read -r -a array <<< "$INTEGRATION_TYPES"
+                integration_types=',' read -r -a array <<< "${{ env.IDENTITY_APPS_TAG }}"
                 echo "$integration_types"
 
                 for type in "${integration_types[@]}"; do
