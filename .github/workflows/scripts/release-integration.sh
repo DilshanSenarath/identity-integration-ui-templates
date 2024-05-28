@@ -1,5 +1,9 @@
 #!/bin/bash
 
+echo "$GH_TOKEN"
+echo "$OWNER"
+echo "$REPO"
+
 # Check if the required number of arguments are provided.
 if [ "$#" -ne 4 ]; then
     echo "Usage: $0 <INTEGRATION_TYPE> <TEMPLATE_NAME> <VERSION_INCREMENT_TYPE> <MAIN_VERSION>"
