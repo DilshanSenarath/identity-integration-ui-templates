@@ -76,7 +76,7 @@ jobs:
                     done
                     
                     for template in "${!unique_template_names[@]}"; do
-                        bash ./scripts/release-integration.sh "$type" "$template" patch
+                        bash ./.github/workflows/scripts/release-integration.sh "$type" "$template" patch
                     done
 
                     unset unique_template_names
