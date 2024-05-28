@@ -1,7 +1,7 @@
 {
 	"id": "salesforce",
 	"name": "Salesforce",
-	"description": "test 3 Custome reti sfs tas senble businesses to manage their sales, marketing, and customer service operations efficiently.",
+	"description": "test 3 Custome reti sfstas senble businesses to manage their sales, marketing, and customer service operations efficiently.",
 	"image": "{{CONSOLE_BASE_URL}}/resources/appdlications/assets/images/illustrations/salesforce.png",
 	"displayOrder": 7,
 	"tags": [
