@@ -58,12 +58,10 @@ jobs:
               run: |
                 diff=$(git diff --name-only HEAD^ HEAD)
 
-                echo "$diff"
-
                 integration_types=(${INTEGRATION_TYPES//,/ })
 
                 for type in "${integration_types[@]}"; do
-                    integration_type_diff=$(grep "^$type/[^/]+/.*" <<<"$diff")
+                    integration_type_diff=$(grep "^$type/.*" <<<"$diff")
                     echo "$integration_type_diff"
 
                     if [[ -z "$integration_type_diff" ]]; then
