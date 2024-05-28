@@ -56,17 +56,11 @@ jobs:
             - name: Check integration template changes
               id: check_integration_template_changes
               run: |
-                diff=$(git diff --name-only HEAD^ HEAD)
-
-                origin_IFS="$IFS"
                 IFS=','
-                integration_types=()
-                for type in "${{ env.INTEGRATION_TYPES }}"; do
-                    integration_types+=("$type")
-                done
-                IFS=origin_IFS
-                echo "$IFS"
-                echo "$integration_types"
+
+                diff=$(git diff --name-only HEAD^ HEAD)
+                
+                integration_types=${{ env.INTEGRATION_TYPES }}
 
                 for type in "${integration_types[@]}"; do
                     integration_type_diff=$(grep "^$type/.*" <<<"$diff")
