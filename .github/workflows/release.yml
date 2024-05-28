@@ -62,7 +62,6 @@ jobs:
 
                 for type in "${integration_types[@]}"; do
                     integration_type_diff=$(grep "^$type/.*" <<<"$diff")
-                    echo "$integration_type_diff"
 
                     if [[ -z "$integration_type_diff" ]]; then
                         continue
@@ -71,7 +70,7 @@ jobs:
                     declare -A unique_template_names
 
                     for filepath in $integration_type_diff; do
-                        template_name="${filepath##*/}"
+                        template_name=$(echo "$filepath" | cut -d'/' -f2)
 
                         unique_template_names["$template_name"]=1
                     done
