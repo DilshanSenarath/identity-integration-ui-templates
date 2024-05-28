@@ -2,7 +2,7 @@
     "create": {
         "image": "assets/images/logos/google.svg",
         "header": "Google",
-        "Subheading": "Login users ith existing Google accounts.",
+        "Subheading": "Loginusers ith existing Google accounts.",
         "documentation": "",
         "modal": {
             "form": {

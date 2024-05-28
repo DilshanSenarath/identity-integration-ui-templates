@@ -24,7 +24,7 @@
 		},
 		"isApplicationSharable": true,
 		"guide": [
-			"test 3 #### Name\nA uniqu nams t isdentify you applicaton.\n\nFor example, My App\n\n---\n\n#### Authorized Redirect URLs\nThe URL to which the authorization code is sent upon authentication and where the user is redirected upon logout.\n\nFor example, [https://myapp.io/login](https://myapp.io/login)\n\n---\n\n#### Allow sharing with sub-organizations\n\nIf enabled, it will share this application with all or any selected sub-organizations that belong to your root organization."
+			"test 3 #### Name\nA uniqu nas t isdentify you applicaton.\n\nFor example, My App\n\n---\n\n#### Authorized Redirect URLs\nThe URL to which the authorization code is sent upon authentication and where the user is redirected upon logout.\n\nFor example, [https://myapp.io/login](https://myapp.io/login)\n\n---\n\n#### Allow sharing with sub-organizations\n\nIf enabled, it will share this application with all or any selected sub-organizations that belong to your root organization."
 		]
 	},
 	"edit": {
