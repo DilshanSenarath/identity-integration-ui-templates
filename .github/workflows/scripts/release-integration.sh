@@ -1,12 +1,8 @@
 #!/bin/bash
 
-echo "$GH_TOKEN"
-echo "$OWNER"
-echo "$REPO"
-
 # Check if the required number of arguments are provided.
 if [ "$#" -ne 4 ]; then
-    echo "Usage: $0 <INTEGRATION_TYPE> <TEMPLATE_NAME> <VERSION_INCREMENT_TYPE> <MAIN_VERSION>"
+    echo "Usage: $0 <INTEGRATION_TYPE> <TEMPLATE_NAME> <VERSION_INCREMENT_TYPE>"
     exit 1
 fi
 
@@ -14,7 +10,6 @@ fi
 INTEGRATION_TYPE=$1
 TEMPLATE_NAME=$2
 VERSION_INCREMENT_TYPE=$3 # patch, minor, or major.
-MAIN_VERSION=$4
 
 
 # Check if the integration exists.
