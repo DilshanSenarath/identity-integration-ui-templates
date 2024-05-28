@@ -37,9 +37,9 @@ on:
                 description: Select the release type
                 type: choice
                 options:
-                    - Major
-                    - Minor
-                    - Patch
+                    - major
+                    - minor
+                    - patch
                 required: true
 
 env:
