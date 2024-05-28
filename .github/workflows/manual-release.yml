@@ -1,0 +1,85 @@
+# -------------------------------------------------------------------------------------
+#
+# Copyright (c) 2024, WSO2 LLC. (https://www.wso2.com).
+#
+# WSO2 LLC. licenses this file to you under the Apache License,
+# Version 2.0 (the "License"); you may not use this file except
+# in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied. See the License for the
+# specific language governing permissions and limitations
+# under the License.
+#
+# --------------------------------------------------------------------------------------
+
+name: 👷 Manual Release
+
+on:
+    workflow_dispatch:
+        inputs:
+            integration_type:
+                description: Select the integration type for which you want the artifacts to be released
+                type: choice
+                options:
+                    - application
+                    - connection
+                required: true
+            integration_name:
+                description: Enter the names of the integrations to be released (e.g., salesforce,zoom)
+                required: true
+            release_type:
+                description: Select the release type
+                type: choice
+                options:
+                    - Major
+                    - Minor
+                    - Patch
+                required: true
+
+env:
+    MAIN_VERSION: v1.0.0
+
+jobs:
+    release_integration_templates:
+        name: Release Integration Templates
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+              with:
+                fetch-depth: 0
+
+            - name: Release Updated Integration Templates
+              run: |
+                integration_type="${{ github.event.inputs.integration_type }}"
+                integration_name="${{ github.event.inputs.integration_name }}"
+                release_type="${{ github.event.inputs.release_type }}"
+
+                validate_integration_name() {
+                    local input="$1"
+                    if [[ "$input" =~ ^[a-zA-Z0-9_-,]+$ ]]; then
+                        echo "$input"
+                    else
+                        echo "Invalid integration_name: $input. Only alphanumeric characters, -, _, and commas are allowed." >&2
+                        exit 1
+                    fi
+                }
+
+                integration_name=$(validate_integration_name "$integration_name")
+                
+                integration_templates=($(echo "$integration_name" | tr ',' ' '))
+
+                for template in "${integration_templates[@]}"; do
+                    bash ./.github/workflows/scripts/release-integration.sh "$integration_type" "$template" "$release_type"
+                done
+              env:
+                GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                OWNER: ${{ github.repository_owner }}
+                REPO: ${{ github.event.repository.name }}
+                MAIN_VERSION: ${{ env.MAIN_VERSION }}

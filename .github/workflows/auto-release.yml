@@ -1,0 +1,86 @@
+# -------------------------------------------------------------------------------------
+#
+# Copyright (c) 2024, WSO2 LLC. (https://www.wso2.com).
+#
+# WSO2 LLC. licenses this file to you under the Apache License,
+# Version 2.0 (the "License"); you may not use this file except
+# in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied. See the License for the
+# specific language governing permissions and limitations
+# under the License.
+#
+# --------------------------------------------------------------------------------------
+
+name: 🚀 Auto Release
+
+on:
+    push:
+        branches: ["main"]
+        paths:
+            - "applications/*/**"
+            - "connections/*/**"
+    workflow_dispatch:
+        inputs:
+            releaseType:
+                description: Select the integration type for which you want the artifacts to be released
+                type: choice
+                options:
+                    - application
+                    - connection
+                required: true
+            integrationName:
+                description: Enter the names of the integrations to be released (e.g., salesforce,zoom)
+                required: true
+
+env:
+    INTEGRATION_TYPES: applications,connections
+    MAIN_VERSION: v1.0.0
+
+jobs:
+    release_integration_templates:
+        name: Release Integration Templates
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+              with:
+                fetch-depth: 0
+
+            - name: Release Updated Integration Templates
+              run: |
+                diff=$(git diff --name-only HEAD^ HEAD)
+                
+                integration_types=($(echo "${{ env.INTEGRATION_TYPES }}" | tr ',' ' '))
+
+                for type in "${integration_types[@]}"; do
+                    integration_type_diff=$(grep -E "^$type/[^/]+/.*" <<<"$diff" || echo "")
+
+                    if [[ -z "$integration_type_diff" ]]; then
+                        continue
+                    fi
+
+                    declare -A unique_template_names
+
+                    for filepath in $integration_type_diff; do
+                        template_name=$(echo "$filepath" | cut -d'/' -f2)
+                        unique_template_names["$template_name"]=1
+                    done
+                    
+                    for template in "${!unique_template_names[@]}"; do
+                        bash ./.github/workflows/scripts/release-integration.sh "$type" "$template" patch
+                    done
+
+                    unset unique_template_names
+                done
+              env:
+                GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                OWNER: ${{ github.repository_owner }}
+                REPO: ${{ github.event.repository.name }}
+                MAIN_VERSION: ${{ env.MAIN_VERSION }}
