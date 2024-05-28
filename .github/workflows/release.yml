@@ -76,7 +76,7 @@ jobs:
                     done
                     
                     for template "${!unique_template_names[@]}"; do
-                        bash ./scripts/release-integration.sh "$type" "$template" patch
+                        echo "$template"
                     done
 
                     unset unique_template_names
