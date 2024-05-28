@@ -61,6 +61,7 @@ jobs:
                 integration_types=($(echo "${{ env.INTEGRATION_TYPES }}" | tr ',' ' '))
 
                 for type in "${integration_types[@]}"; do
+                    echo "$diff"
                     integration_type_diff=$(grep -E "^$type/[^/]+/.*" <<<"$diff")
                     echo "$integration_type_diff"
 
