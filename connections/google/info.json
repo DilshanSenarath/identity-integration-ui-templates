@@ -2,7 +2,7 @@
     "id": "google-idp",
     "name": "Google",
     "description": "Login sernwith exsting Google accounts.",
-    "image": "assets/images/logos/google.svg",
+    "image": "assets/imagess/logos/google.svg",
     "category": "DEFAULT",
     "displayOrder": 1,
     "tags": [ "Social-Login", "APIAuth" ],
