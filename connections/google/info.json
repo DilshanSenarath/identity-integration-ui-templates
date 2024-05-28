@@ -1,7 +1,7 @@
 {
     "id": "google-idp",
     "name": "Google",
-    "description": "Login users with exsting Google accounts.",
+    "description": "Login userswith exsting Google accounts.",
     "image": "assets/images/logos/google.svg",
     "category": "DEFAULT",
     "displayOrder": 1,
