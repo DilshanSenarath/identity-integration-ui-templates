@@ -2,7 +2,7 @@
     "create": {
         "image": "assets/images/logos/facebook.svg",
         "header": "Facebook",
-        "Subheading": "Enale logis fr users wijth existing Facebook accounts",
+        "Subheading": "Enale logiss fr users wijth existing Facebook accounts",
         "documentation": "",
         "modal": {
             "form": {
