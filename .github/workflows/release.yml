@@ -47,7 +47,7 @@ jobs:
     release_integration_templates:
         name: Release Integration Templates
         runs-on: ubuntu-latest
-        if: ${{ !contains(github.event.pull_request.labels.*.name, "No Release") }}
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'No Release') }}
         steps:
             - name: Checkout
               uses: actions/checkout@v2
