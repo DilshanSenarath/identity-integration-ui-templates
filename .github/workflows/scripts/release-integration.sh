@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Check if the required number of arguments are provided.
-if [ "$#" -ne 3 ]; then
-    echo "Usage: $0 <INTEGRATION_TYPE> <TEMPLATE_NAME> <VERSION_INCREMENT_TYPE>"
+if [ "$#" -ne 6 ]; then
+    echo "Usage: $0 <INTEGRATION_TYPE> <TEMPLATE_NAME> <VERSION_INCREMENT_TYPE> <MAIN_VERSION> <GITHUB_TOKEN> <GITHUB_REPOSITORY>"
     exit 1
 fi
 
@@ -10,6 +10,9 @@ fi
 INTEGRATION_TYPE=$1
 TEMPLATE_NAME=$2
 VERSION_INCREMENT_TYPE=$3 # patch, minor, or major.
+MAIN_VERSION=$4
+GITHUB_TOKEN=$5
+GITHUB_REPOSITORY=$6
 
 
 # Check if the integration exists.
@@ -22,7 +25,7 @@ fi
 previou_tag=$(git tag | grep -E "^@$INTEGRATION_TYPE/@$TEMPLATE_NAME-v[0-9]+\.[0-9]+\.[0-9]+$" | sort -V | tail -n 1 || echo "")
 
 if [[ -z "$previou_tag" ]]; then
-    new_tag="${{ env.MAIN_VERSION }}"
+    new_tag="$MAIN_VERSION"
 else
     # Extract the version number using grep and regular expressions.
     if [[ $previou_tag =~ v([0-9]+)\.([0-9]+)\.([0-9]+) ]]; then
@@ -63,9 +66,9 @@ cd - >/dev/null
 
 # Create a release using GitHub's REST API
 release_response=$(curl -X POST \
-    -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+    -H "Authorization: token $GITHUB_TOKEN" \
     -H "Accept: application/vnd.github.v3+json" \
-    https://api.github.com/repos/${{ env.GITHUB_REPOSITORY }}/releases \
+    https://api.github.com/repos/$GITHUB_REPOSITORY/releases \
     -d "{\"tag_name\": \"$new_tag\", \"name\": \"$new_tag\"}")
 
 # Extract the release ID from the response
@@ -77,7 +80,7 @@ echo "Created release with ID: $release_id"
 upload_url=$(echo "$release_response" | jq -r '.upload_url' | sed 's/{?name,label}//')
 
 curl -X POST \
-    -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+    -H "Authorization: token $GITHUB_TOKEN" \
     -H "Content-Type: application/zip" \
     --data-binary @"$temp_dir/$TEMPLATE_NAME-$new_tag.zip" \
     "$upload_url?name=$TEMPLATE_NAME-$new_tag.zip"
