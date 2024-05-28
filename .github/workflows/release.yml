@@ -58,6 +58,8 @@ jobs:
               run: |
                 diff=$(git diff --name-only HEAD^ HEAD)
 
+                echo "$diff"
+
                 integration_types=(${INTEGRATION_TYPES//,/ })
 
                 for type in "${integration_types[@]}"; do
