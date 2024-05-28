@@ -41,7 +41,8 @@ on:
 
 env:
     INTEGRATION_TYPES: applications,connections
-    MAIN_VERSION: v1.0
+    MAIN_VERSION: v1.0.0
+    GITHUB_REPOSITORY: DilshanSenarath/identity-integration-ui-templates
 
 jobs:
     release_integration_templates:
@@ -51,7 +52,7 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v2
               with:
-                fetch-depth: 2
+                fetch-depth: 0
 
             - name: Check integration template changes
               id: check_integration_template_changes
@@ -73,8 +74,10 @@ jobs:
                         template_name=$(echo "$filepath" | cut -d'/' -f2)
                         unique_template_names["$template_name"]=1
                     done
-                    echo "$type"
-                    echo "${!unique_template_names[@]}"
+                    
+                    for template "${!unique_template_names[@]}"; do
+                        bash ./scripts/release-integration.sh "$type" "$template" patch
+                    done
 
                     unset unique_template_names
                 done
