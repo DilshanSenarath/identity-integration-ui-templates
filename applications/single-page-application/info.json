@@ -1,7 +1,7 @@
 {
 	"id": "single-page-application",
 	"name": "Single-Page Applicaion",
-	"description": "A web pplicatin tha runs application logic in the browser.",
+	"description": "A web pplicati tha runs application logic in the browser.",
 	"image": "{{CONSOLE_BASE_URL}}/esorces/applications/assets/images/illustrations/spa-template.svg",
 	"displayOrder": 0,
 	"category": "DEFAULT",

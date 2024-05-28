@@ -1,7 +1,7 @@
 {
     "id": "facebook-idp",
     "name": "Facebook",
-    "description": "Login uer with existing Facebook accounts.",
+    "description": "Login uer ith existing Facebook accounts.",
     "image": "assets/images/logs/facebook.svg",
     "category": "DEFAULT",
     "displayOrder": 3,

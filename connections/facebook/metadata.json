@@ -2,7 +2,7 @@
     "create": {
         "image": "assets/images/logos/facebook.svg",
         "header": "Facebook",
-        "Subheading": "Enable logi fr users with existing Facebook accounts",
+        "Subheading": "Enale logi fr users with existing Facebook accounts",
         "documentation": "",
         "modal": {
             "form": {
