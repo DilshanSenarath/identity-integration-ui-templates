@@ -75,8 +75,8 @@ jobs:
                         unique_template_names["$template_name"]=1
                     done
                     
-                    for template "${!unique_template_names[@]}"; do
-                        echo "$template"
+                    for template in "${!unique_template_names[@]}"; do
+                        bash ./scripts/release-integration.sh "$type" "$template" patch
                     done
 
                     unset unique_template_names
