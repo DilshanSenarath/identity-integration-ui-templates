@@ -65,7 +65,7 @@ jobs:
 
                     if [ $? -ne 0 ]; then
                         continue
-                    else
+                    fi
 
                     echo "$integration_type_diff"
                     echo "$type"
