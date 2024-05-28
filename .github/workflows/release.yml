@@ -60,8 +60,6 @@ jobs:
 
                 integration_types=(${INTEGRATION_TYPES//,/ })
 
-                declare -A integration_templates
-
                 for type in "${integration_types[@]}"; do
                     integration_type_diff=$(grep "^$type/" <<<"$diff")
 
@@ -77,19 +75,10 @@ jobs:
                         unique_template_names["$template_name"]=1
                     done
 
-                    integration_templates["$type"]=$(echo "${!unique_template_names[@]}" | tr ' ' ',')
+                    echo "$type"
+                    echo "${!unique_template_names[@]}"
                 done
-
-            - name: Use Templates
-              run: |
-                for resource_type in "${!integration_templates[@]}"; do
-                    echo "Resource type: $resource_type"
-                    if [[ -n "${integration_templates[$resource_type]}" ]]; then
-                        echo "  - ${integration_templates[$resource_type]}"
-                    else
-                        echo "  - No changes detected."
-                    fi
-                done
+                
 
         # dev-build:
         #     runs-on: ubuntu-latest
