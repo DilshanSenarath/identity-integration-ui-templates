@@ -1,7 +1,7 @@
 {
     "id": "salesforce",
     "name": "Salesforce",
-    "description": "test 1 Saleforce is a usstome res=lationship management (CRM) platform that enables businesses to manage their sales, marketing, and customer service operations efficiently.",
+    "description": "test 2 Saleforce is a usstome res=lationship management (CRM) platform that enables businesses to manage their sales, marketing, and customer service operations efficiently.",
     "image": "{{CONSOLE_BASE_URL}}/esources/aplications/assets/images/illustrations/salesforce.svg",
     "displayOrder": 6,
     "category": "SSO-INTEGRATION",
