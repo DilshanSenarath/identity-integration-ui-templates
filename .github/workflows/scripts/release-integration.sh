@@ -62,7 +62,7 @@ zip -r "$TEMPLATE_NAME-$new_tag.zip" "$INTEGRATION_TYPE"
 cd - >/dev/null
 
 # Create a release using GitHub CLI.
-gh release create "@$INTEGRATION_TYPE/$TEMPLATE_NAME-$new_tag" "$temp_dir/$TEMPLATE_NAME-$new_tag.zip"
+gh release create "@$INTEGRATION_TYPE/$TEMPLATE_NAME-$new_tag" "$temp_dir/$TEMPLATE_NAME-$new_tag.zip" --generate-notes
 
 # Clean up: Remove the temporary directory.
 rm -rf "$temp_dir"
