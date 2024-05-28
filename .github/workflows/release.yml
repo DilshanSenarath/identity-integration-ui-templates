@@ -68,13 +68,15 @@ jobs:
                     fi
 
                     declare -A unique_template_names
-                    
+
                     for filepath in $integration_type_diff; do
                         template_name=$(echo "$filepath" | cut -d'/' -f2)
                         unique_template_names["$template_name"]=1
                     done
                     echo "$type"
                     echo "${!unique_template_names[@]}"
+
+                    unset unique_template_names
                 done
                 
 
