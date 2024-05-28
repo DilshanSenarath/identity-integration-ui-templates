@@ -27,8 +27,8 @@ on:
                 description: Select the integration type for which you want the artifacts to be released
                 type: choice
                 options:
-                    - application
-                    - connection
+                    - applications
+                    - connections
                 required: true
             integration_name:
                 description: Enter the names of the integrations to be released (e.g., salesforce,zoom)

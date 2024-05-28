@@ -26,18 +26,6 @@ on:
         paths:
             - "applications/*/**"
             - "connections/*/**"
-    workflow_dispatch:
-        inputs:
-            releaseType:
-                description: Select the integration type for which you want the artifacts to be released
-                type: choice
-                options:
-                    - application
-                    - connection
-                required: true
-            integrationName:
-                description: Enter the names of the integrations to be released (e.g., salesforce,zoom)
-                required: true
 
 env:
     INTEGRATION_TYPES: applications,connections
