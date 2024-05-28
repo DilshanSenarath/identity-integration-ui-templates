@@ -75,7 +75,7 @@ jobs:
                     done
                     
                     for template in "${!unique_template_names[@]}"; do
-                        bash ./.github/workflows/scripts/release-integration.sh "$type" "$template" patch ${{ env.MAIN_VERSION }} ${{ secrets.GITHUB_TOKEN }}
+                        bash ./.github/workflows/scripts/release-integration.sh "$type" "$template" patch ${{ env.MAIN_VERSION }}
                     done
 
                     unset unique_template_names
