@@ -64,26 +64,8 @@ zip -r "$TEMPLATE_NAME-$new_tag.zip" "$INTEGRATION_TYPE"
 # Navigate back to the previous directory.
 cd - >/dev/null
 
-# Create a release using GitHub's REST API
-release_response=$(curl -X POST \
-    -H "Authorization: token $GITHUB_TOKEN" \
-    -H "Accept: application/vnd.github.v3+json" \
-    https://api.github.com/repos/$GITHUB_REPOSITORY/releases \
-    -d "{\"tag_name\": \"$new_tag\", \"name\": \"$new_tag\"}")
-
-# Extract the release ID from the response
-release_id=$(echo "$release_response" | jq -r '.id')
-
-echo "Created release with ID: $release_id"
-
-# Upload the zip file as an asset to the release
-upload_url=$(echo "$release_response" | jq -r '.upload_url' | sed 's/{?name,label}//')
-
-curl -X POST \
-    -H "Authorization: token $GITHUB_TOKEN" \
-    -H "Content-Type: application/zip" \
-    --data-binary @"$temp_dir/$TEMPLATE_NAME-$new_tag.zip" \
-    "$upload_url?name=$TEMPLATE_NAME-$new_tag.zip"
+# Create a release using GitHub CLI.
+gh release create "$new_tag" "$temp_dir/$TEMPLATE_NAME-$new_tag.zip"
 
 # Clean up: Remove the temporary directory.
 rm -rf "$temp_dir"
