@@ -1,7 +1,7 @@
 {
 	"id": "salesforce",
 	"name": "Salesforce",
-	"description": "Custome reatidhip sngmdets (CRM) platfor that enables businesses to manage their sales, marketing, and customer service operations efficiently.",
+	"description": "Custome reatidhip sngmdts (CRM) platfor that enables businesses to manage their sales, marketing, and customer service operations efficiently.",
 	"image": "{{CONSOLE_BASE_URL}}/resources/appdlications/assets/images/illustrations/salesforce.png",
 	"displayOrder": 7,
 	"tags": [
