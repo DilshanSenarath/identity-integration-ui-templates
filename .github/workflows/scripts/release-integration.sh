@@ -56,7 +56,7 @@ mkdir -p "$temp_dir/$INTEGRATION_TYPE/$TEMPLATE_NAME"
 cp -r "$INTEGRATION_TYPE/$TEMPLATE_NAME"/* "$temp_dir/$INTEGRATION_TYPE/$TEMPLATE_NAME"
 
 # Navigate to the parent directory of the temporary directory.
-cd "$(dirname "$temp_dir")"
+cd "$temp_dir"
 
 # Create a zip file with the contents.
 zip -r "$TEMPLATE_NAME-$new_tag.zip" "$INTEGRATION_TYPE"
