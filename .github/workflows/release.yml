@@ -59,7 +59,7 @@ jobs:
                 diff=$(git diff --name-only HEAD^ HEAD)
 
                 origin_IFS="$IFS"
-                IFS=',' read -r -a integration_types <<< ${{ env.INTEGRATION_TYPES }}
+                IFS=',' read -r -a integration_types <<< "${{ env.INTEGRATION_TYPES }}"
                 IFS=origin_IFS
                 echo "$integration_types"
 
