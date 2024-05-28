@@ -63,7 +63,7 @@ jobs:
 
                 validate_integration_name() {
                     local input="$1"
-                    if [[ "$input" =~ ^[a-zA-Z0-9_-,]+$ ]]; then
+                    if [[ "$input" =~ ^[a-zA-Z0-9_,-]+$ ]]; then
                         echo "$input"
                     else
                         echo "Invalid integration_name: $input. Only alphanumeric characters, -, _, and commas are allowed." >&2
