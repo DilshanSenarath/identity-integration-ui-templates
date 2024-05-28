@@ -42,7 +42,6 @@ on:
 env:
     INTEGRATION_TYPES: applications,connections
     MAIN_VERSION: v1.0.0
-    GITHUB_REPOSITORY: DilshanSenarath/identity-integration-ui-templates
 
 jobs:
     release_integration_templates:
@@ -76,11 +75,15 @@ jobs:
                     done
                     
                     for template in "${!unique_template_names[@]}"; do
-                        bash ./.github/workflows/scripts/release-integration.sh "$type" "$template" patch ${{ env.MAIN_VERSION }} ${{ secrets.GITHUB_TOKEN }} ${{ env.GITHUB_REPOSITORY }}
+                        bash ./.github/workflows/scripts/release-integration.sh "$type" "$template" patch ${{ env.MAIN_VERSION }} ${{ secrets.GITHUB_TOKEN }}
                     done
 
                     unset unique_template_names
                 done
+              env:
+                GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                OWNER: ${{ github.repository_owner }}
+                REPO: ${{ github.event.repository.name }}
                 
 
         # dev-build:
