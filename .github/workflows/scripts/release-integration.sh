@@ -24,7 +24,7 @@ if [ ! -d "$INTEGRATION_TYPE/$TEMPLATE_NAME" ]; then
 fi
 
 # Get all tags, filter by pattern, and sort them.
-previou_tag=$(git tag | grep -E "^@$INTEGRATION_TYPE/@$TEMPLATE_NAME-v[0-9]+\.[0-9]+\.[0-9]+$" | sort -V | tail -n 1 || echo "")
+previou_tag=$(git tag | grep -E "^@$INTEGRATION_TYPE/$TEMPLATE_NAME-v[0-9]+\.[0-9]+\.[0-9]+$" | sort -V | tail -n 1 || echo "")
 
 if [[ -z "$previou_tag" ]]; then
     new_tag="$MAIN_VERSION"
@@ -67,7 +67,7 @@ zip -r "$TEMPLATE_NAME-$new_tag.zip" "$INTEGRATION_TYPE"
 cd - >/dev/null
 
 # Create a release using GitHub CLI.
-gh release create "$new_tag" "$temp_dir/$TEMPLATE_NAME-$new_tag.zip"
+gh release create "@$INTEGRATION_TYPE/$TEMPLATE_NAME-$new_tag" "$temp_dir/$TEMPLATE_NAME-$new_tag.zip"
 
 # Clean up: Remove the temporary directory.
 rm -rf "$temp_dir"
