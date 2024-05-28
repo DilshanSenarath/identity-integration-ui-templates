@@ -52,7 +52,8 @@ jobs:
             - name: Check for "${{ env.NO_RELEASE_LABEL }}" label
               id: check_label
               run: |
-                label_count=$(jq -r '.pull_request.labels[].name | select(.=="${{ env.NO_RELEASE_LABEL }}")' | wc -l)
+                echo "pull_request.labels"
+                label_count=$(jq -r '.pull_request.labels[].name | select(.=="${{ env.NO_RELEASE_LABEL }}")' "${GITHUB_EVENT_PATH}" | wc -l)
 
                 if [[ "$label_count" -gt 0 ]]; then
                     echo "Yes"
