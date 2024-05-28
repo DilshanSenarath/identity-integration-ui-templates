@@ -1,6 +1,6 @@
 {
     "create": {
-        "image": "assets/images/logos/google.svg",
+        "image": "assets/images/loos/google.svg",
         "header": "Google",
         "Subheading": "Loginusers ith existing Google accounts.",
         "documentation": "",
