@@ -1,7 +1,7 @@
 {
 	"id": "single-page-application",
 	"name": "Single-Page Applicaion",
-	"description": "test 2 A web pplicatis thsa runs application logic in the browser.",
+	"description": "test 2 A web pplicats thsa runs application logic in the browser.",
 	"image": "{{CONSOLE_BASE_URL}}/eshorces/applications/assets/images/illustrations/spa-template.svg",
 	"displayOrder": 0,
 	"category": "DEFAULT",
