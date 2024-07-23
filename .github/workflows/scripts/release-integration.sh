@@ -75,6 +75,30 @@ temp_dir=$(mktemp -d)
 mkdir -p "$temp_dir/$INTEGRATION_TYPE/$TEMPLATE_NAME"
 cp -r "$INTEGRATION_TYPE/$TEMPLATE_NAME"/* "$temp_dir/$INTEGRATION_TYPE/$TEMPLATE_NAME"
 
+# Function to add a new property to a JSON file.
+add_property_to_json() {
+  local json_file=$1
+  local new_property=$2
+  local new_value=$3
+
+  # Check if the file exists.
+  if [ ! -f "$json_file" ]; then
+    echo "File not found!"
+    exit 1
+  fi
+
+  # Use jq to add the new property and save to a temporary file.
+  jq --arg key "$new_property" --arg value "$new_value" '. + {($key): $value}' "$json_file" > "$json_file.tmp"
+
+  # Move the temporary file to the original file location.
+  mv "$json_file.tmp" "$json_file"
+}
+
+json_file="$temp_dir/$INTEGRATION_TYPE/$TEMPLATE_NAME/info.json"
+version_property_key="version"
+
+add_property_to_json "$json_file" "$version_property_key" "$new_tag"
+
 # Navigate to the parent directory of the temporary directory.
 cd "$temp_dir"
 
