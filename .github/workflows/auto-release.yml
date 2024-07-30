@@ -26,6 +26,26 @@ on:
         paths:
             - "applications/*/**"
             - "connections/*/**"
+    workflow_dispatch:
+        inputs:
+            integration_type:
+                description: Select the integration type for which you want the artifacts to be released
+                type: choice
+                options:
+                    - applications
+                    - connections
+                required: true
+            integration_name:
+                description: Enter the names of the integrations to be released (e.g., salesforce,zoom)
+                required: true
+            release_type:
+                description: Select the release type
+                type: choice
+                options:
+                    - major
+                    - minor
+                    - patch
+                required: true
 
 env:
     INTEGRATION_TYPES: applications,connections
@@ -43,30 +63,54 @@ jobs:
 
             - name: Release Updated Integration Templates
               run: |
-                diff=$(git diff --name-only HEAD^ HEAD)
-                
-                integration_types=($(echo "${{ env.INTEGRATION_TYPES }}" | tr ',' ' '))
+                if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+                    integration_type="${{ github.event.inputs.integration_type }}"
+                    integration_name="${{ github.event.inputs.integration_name }}"
+                    release_type="${{ github.event.inputs.release_type }}"
 
-                for type in "${integration_types[@]}"; do
-                    integration_type_diff=$(grep -E "^$type/[^/]+/.*" <<<"$diff" || echo "")
+                    validate_integration_name() {
+                        local input="$1"
+                        if [[ "$input" =~ ^[a-zA-Z0-9_,-]+$ ]]; then
+                            echo "$input"
+                        else
+                            echo "Invalid integration_name: $input. Only alphanumeric characters, -, _, and commas are allowed." >&2
+                            exit 1
+                        fi
+                    }
 
-                    if [[ -z "$integration_type_diff" ]]; then
-                        continue
-                    fi
-
-                    declare -A unique_template_names
-
-                    for filepath in $integration_type_diff; do
-                        template_name=$(echo "$filepath" | cut -d'/' -f2)
-                        unique_template_names["$template_name"]=1
-                    done
+                    integration_name=$(validate_integration_name "$integration_name")
                     
-                    for template in "${!unique_template_names[@]}"; do
-                        bash ./.github/workflows/scripts/release-integration.sh "$type" "$template" patch
-                    done
+                    integration_templates=($(echo "$integration_name" | tr ',' ' '))
 
-                    unset unique_template_names
-                done
+                    for template in "${integration_templates[@]}"; do
+                        bash ./.github/workflows/scripts/release-integration.sh "$integration_type" "$template" "$release_type"
+                    done
+                else
+                    diff=$(git diff --name-only HEAD^ HEAD)
+                
+                    integration_types=($(echo "${{ env.INTEGRATION_TYPES }}" | tr ',' ' '))
+
+                    for type in "${integration_types[@]}"; do
+                        integration_type_diff=$(grep -E "^$type/[^/]+/.*" <<<"$diff" || echo "")
+
+                        if [[ -z "$integration_type_diff" ]]; then
+                            continue
+                        fi
+
+                        declare -A unique_template_names
+
+                        for filepath in $integration_type_diff; do
+                            template_name=$(echo "$filepath" | cut -d'/' -f2)
+                            unique_template_names["$template_name"]=1
+                        done
+                        
+                        for template in "${!unique_template_names[@]}"; do
+                            bash ./.github/workflows/scripts/release-integration.sh "$type" "$template" patch
+                        done
+
+                        unset unique_template_names
+                    done
+                fi
               env:
                 GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                 OWNER: ${{ github.repository_owner }}
