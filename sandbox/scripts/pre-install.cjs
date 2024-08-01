@@ -127,7 +127,7 @@ try {
 console.log("Building the identity-apps repository is in progress...");
 // Run pnpm install.
 try {
-    cp.execSync("pnpm install", { stdio: "inherit" });
+    cp.execSync("pnpm install --no-frozen-lockfile", { stdio: "inherit" });
     console.log("Successfully ran pnpm install");
 } catch (error) {
     console.error(`Error running pnpm install: ${error.message}`);
