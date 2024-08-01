@@ -88,10 +88,8 @@ checkGitInstalled();
 console.log("Clearing the stale data...");
 const tempDir = path.join(__dirname, "..", "tmp");
 const nodeModulesDir = path.join(__dirname, "..", "node_modules");
-const lockFile = path.join(__dirname, "..", "pnpm-lock.yaml");
 const wso2ModulesDir = path.join(__dirname, "..", "packages");
 deleteDirectory(tempDir);
-deleteFile(lockFile);
 deleteDirectory(nodeModulesDir);
 deleteDirectory(wso2ModulesDir);
 
@@ -99,7 +97,7 @@ deleteDirectory(wso2ModulesDir);
 cp.execSync(`mkdir ${tempDir}`);
 
 console.log("Cloning the identity-apps repository is in progress...");
-cp.execSync(`git clone --branch sso-templates --single-branch ${IDENTITY_APPS_REPOSITORY} ${tempDir}`);
+cp.execSync(`git clone --depth 1 --branch sso-templates --single-branch ${IDENTITY_APPS_REPOSITORY} ${tempDir}`);
 
 
 console.log("Updating the react-components package.json...");
