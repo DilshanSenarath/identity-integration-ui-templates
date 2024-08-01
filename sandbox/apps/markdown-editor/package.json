@@ -1,0 +1,45 @@
+{
+    "name": "markdown-editor",
+    "private": true,
+    "version": "1.0.0",
+    "type": "module",
+    "description": "Markdown editor for writing WSO2 Identity Server integration guides.",
+    "author": "WSO2",
+    "license": "Apache-2.0",
+    "scripts": {
+        "dev": "vite",
+        "build": "pnpm lint && tsc -b && vite build",
+        "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+        "preview": "vite preview"
+    },
+    "dependencies": {
+        "@oxygen-ui/react": "^1.13.2",
+        "@oxygen-ui/react-icons": "^1.13.2",
+        "@wso2is/react-components": "workspace:*",
+        "lodash-es": "^4.17.21",
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1"
+    },
+    "devDependencies": {
+        "@rollup/plugin-node-resolve": "^15.2.3",
+        "@types/codemirror": "^5.52.0",
+        "@types/lodash-es": "^4.17.4",
+        "@types/react": "^18.3.3",
+        "@types/react-dom": "^18.3.0",
+        "@typescript-eslint/parser": "^7.15.0",
+        "@vitejs/plugin-react": "^4.3.1",
+        "@wso2/eslint-plugin": "https://gitpkg.now.sh/brionmario/wso2-ui-configs/packages/eslint-plugin?5bf60cabe9e9a2571e8b1dd16d0c3bdc76db2c4f",
+        "eslint": "8.46.0",
+        "eslint-config-prettier": "9.1.0",
+        "eslint-plugin-header": "jeradrutnam/eslint-plugin-header#main",
+        "eslint-plugin-import": "^2.20.2",
+        "eslint-plugin-jsx-a11y": "6.5.1",
+        "eslint-plugin-react": "7.31.11",
+        "eslint-plugin-react-hooks": "^4.0.0",
+        "eslint-plugin-tsdoc": "^0.2.16",
+        "prettier": "^2.8.0",
+        "typescript": "^5.2.2",
+        "vite": "^5.3.5",
+        "vite-plugin-node-polyfills": "^0.22.0"
+    }
+}

@@ -42,7 +42,7 @@ fi
 previou_tag=$(git tag | grep -E "^@$INTEGRATION_TYPE/$TEMPLATE_NAME-v[0-9]+\.[0-9]+\.[0-9]+$" | sort -V | tail -n 1 || echo "")
 
 if [[ -z "$previou_tag" ]]; then
-    new_tag="$MAIN_VERSION"
+    new_tag="$INITIAL_VERSION"
 else
     # Extract the version number using grep and regular expressions.
     if [[ $previou_tag =~ v([0-9]+)\.([0-9]+)\.([0-9]+) ]]; then

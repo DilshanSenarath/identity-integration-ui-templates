@@ -1,0 +1,89 @@
+# This workflow will deploy the sandbox as static content to GitHub Pages.
+
+name: ☄️ Deploy Sandbox
+
+on:
+  workflow_dispatch:
+    inputs:
+      basePath:
+        description: |
+          The base path to deploy the sandbox to. Default is "sandbox" (https://wso2-extensions.github.io/identity-integration-ui-templates/sandbox/).
+          Note: Do not include a leading or trailing slash.
+        default: "identity-integration-ui-templates/sandbox"
+        type: string
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [lts/*]
+        pnpm-version: [ 8.7.4 ]
+    steps:
+      - name: ⬇️ Checkout
+        id: checkout
+        uses: actions/checkout@v2.3.3
+        with:
+          fetch-depth: 0
+          token: ${{ env.GH_TOKEN }}
+
+      - name: 🟢 Setup node
+        id: setup-node
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: 🥡 Setup pnpm
+        id: setup-pnpm
+        uses: pnpm/action-setup@v2.1.0
+        with:
+          version: ${{ matrix.pnpm-version }}
+          run_install: false
+
+      - name: 🎈 Get pnpm store directory
+        id: get-pnpm-cache-dir
+        run: |
+          echo "::set-output name=pnpm_cache_dir::$(pnpm store path)"
+
+      - name: 🧩 Install Dependencies
+        id: install-dependencies
+        run: |
+          cd sandbox
+          pnpm bootstrap
+
+      - name: 🏗️ Build Project
+        id: build
+        run: |
+          pnpm build
+
+      - name: ⚙️ Setup Pages
+        id: setup-pages
+        uses: actions/configure-pages@v3
+
+      - name: 🌩 Upload artifact
+        id: upload-artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: ./apps/markdown-editor/dist
+
+      - name: 🔥 Deploy to GitHub Pages
+        id: deploy-gh-pages
+        uses: actions/deploy-pages@v1

@@ -1,0 +1,24 @@
+{
+    "name": "sandbox",
+    "private": true,
+    "workspaces": [
+        "apps/*",
+        "packages/*"
+    ],
+    "version": "1.0.0",
+    "type": "module",
+    "description": "Sandbox Environment for Template Creation.",
+    "author": "WSO2",
+    "license": "Apache-2.0",
+    "scripts": {
+        "bootstrap": "node scripts/pre-install.cjs && pnpm install",
+        "build": "pnpm --filter markdown-editor build",
+        "dev": "pnpm --filter markdown-editor dev",
+        "preview": "pnpm --filter markdown-editor preview"
+    },
+    "pnpm": {
+        "overrides": {
+            "@types/react": "18.0.18"
+        }
+    }
+}
