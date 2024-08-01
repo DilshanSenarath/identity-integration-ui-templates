@@ -72,6 +72,7 @@ jobs:
       - name: 🏗️ Build Project
         id: build
         run: |
+          cd sandbox
           pnpm build
 
       - name: ⚙️ Setup Pages
@@ -82,7 +83,7 @@ jobs:
         id: upload-artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: ./apps/markdown-editor/dist
+          path: ./sandbox/apps/markdown-editor/dist
 
       - name: 🔥 Deploy to GitHub Pages
         id: deploy-gh-pages
